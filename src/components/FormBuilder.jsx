@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import QuestionNode from "./QuestionNode.jsx";
 
-
 function FormBuilder() {
   const [questions, setQuestions] = useState([]);
   const [isSubmitted,setIsSubmitted] =useState(false);
@@ -74,14 +73,15 @@ function FormBuilder() {
 
   return (
     <div>
-      <h2>form builder</h2>
-      {!isSubmitted &&(
-        <>
-        <button onClick={addParentQuestion}>Add New Question</button>
-        <button onClick={()=>setIsSubmitted(true)}>Submit</button>
-        </>
-
-      )}
+      <h1 style={{ textAlign: 'center' }}>Nested Form</h1>
+      <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+        {!isSubmitted && (
+          <>
+            <button onClick={addParentQuestion} style={{ marginRight: '10px' }}>Add New Question</button>
+            <button onClick={()=>setIsSubmitted(true)}>Submit</button>
+          </>
+        )}
+      </div>
 
       {questions.map((q,index) => (
         <QuestionNode
