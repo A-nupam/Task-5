@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import QuestionNode from "./QuestionNode.jsx";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 function FormBuilder() {
   const [questions, setQuestions] = useState([]);
@@ -71,6 +72,20 @@ function FormBuilder() {
     setQuestions((prev)=>deleteRecursive(prev));
   };
 
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const fromIndex = result.source.index;
+    const toIndex = result.destination.index;
+    if (fromIndex === toIndex) return;
+
+    setQuestions((prev) => {
+      const next = Array.from(prev);
+      const [moved] = next.splice(fromIndex, 1);
+      next.splice(toIndex, 0, moved);
+      return next;
+    });
+  };
+
   return (
     <div>
       <h1 style={{ textAlign: 'center' }}>Nested Form</h1>
@@ -83,17 +98,43 @@ function FormBuilder() {
         )}
       </div>
 
-      {questions.map((q,index) => (
-        <QuestionNode
-          key={q.id}
-          question={q}
-          number={`${index+1}`}
-          onUpdate={updateQuestion}
-          onAddChild={addChildQuestion}
-          onDelete={deleteQuestion}
-          readOnly={isSubmitted}
-        />
-      ))}
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="parent-questions">
+          {(provided) => (
+            <div ref={provided.innerRef} {...provided.droppableProps}>
+              {questions.map((q, index) => (
+                <Draggable
+                  key={q.id}
+                  draggableId={q.id}
+                  index={index}
+                  isDragDisabled={isSubmitted}
+                >
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      style={{
+                        ...provided.draggableProps.style,
+                      }}
+                    >
+                      <QuestionNode
+                        question={q}
+                        number={`${index + 1}`}
+                        onUpdate={updateQuestion}
+                        onAddChild={addChildQuestion}
+                        onDelete={deleteQuestion}
+                        readOnly={isSubmitted}
+                        dragHandleProps={provided.dragHandleProps}
+                      />
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
     </div>
   );
 }

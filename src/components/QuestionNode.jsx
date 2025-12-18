@@ -1,6 +1,6 @@
 import React from "react";
 
-function QuestionNode({ question,number, onUpdate, onAddChild, onDelete,readOnly }) {
+function QuestionNode({ question,number, onUpdate, onAddChild, onDelete,readOnly, dragHandleProps }) {
   return (
     <div style={{ 
       marginLeft: '3%', 
@@ -11,6 +11,21 @@ function QuestionNode({ question,number, onUpdate, onAddChild, onDelete,readOnly
       backgroundColor: "white",
     }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '1%', marginTop: '0.5%', marginBottom: '1%', flexWrap: 'wrap' }}>
+        {!readOnly && dragHandleProps && (
+          <span
+            {...dragHandleProps}
+            style={{
+              cursor: 'grab',
+              userSelect: 'none',
+              fontWeight: 700,
+              padding: '0 0.5em',
+            }}
+            title="Drag"
+            aria-label="Drag"
+          >
+            ⋮⋮
+          </span>
+        )}
         <b style={{ flex: '0 0 auto' }}>Q{number}</b>
         <input
           type="text"
